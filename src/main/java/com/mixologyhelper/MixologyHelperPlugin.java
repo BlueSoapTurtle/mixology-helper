@@ -4,10 +4,7 @@ import com.google.inject.Provides;
 import lombok.Getter;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.GameObjectSpawned;
-import net.runelite.api.events.GraphicsObjectCreated;
-import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.events.*;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
@@ -100,13 +97,13 @@ public class MixologyHelperPlugin extends Plugin {
 
     // The objects
     @Getter
-    private final List<GameObject> conveyorBelts = new ArrayList<>();
+    private final List<TileObject> conveyorBelts = new ArrayList<>();
     @Getter
-    private final Map<Ingredient, GameObject> levers = new HashMap<>();
+    private final Map<Ingredient, TileObject> levers = new HashMap<>();
     @Getter
-    private final Map<Process, GameObject> machines = new HashMap<>();
+    private final Map<Process, TileObject> machines = new HashMap<>();
     @Getter
-    private GameObject mixer;
+    private TileObject mixer;
 
     @Getter
     List<Order> orders = Arrays.asList(new Order(), new Order(), new Order());
@@ -323,39 +320,48 @@ public class MixologyHelperPlugin extends Plugin {
     }
 
     @Subscribe
+    public void onDecorativeObjectSpawned(DecorativeObjectSpawned event) {
+        TileObject tileObject = event.getDecorativeObject();
+
+        if (tileObject.getId() == ObjectID.AGA_LEVER) {
+            levers.put(Ingredient.AGA, tileObject);
+        }
+    }
+
+    @Subscribe
     public void onGameObjectSpawned(GameObjectSpawned event) {
-        final GameObject gameObject = event.getGameObject();
-        if (gameObject.getId() == ObjectID.MATURE_DIGWEED) {
-            WorldPoint worldLocation = gameObject.getWorldLocation();
+        final TileObject tileObject = event.getGameObject();
+        if (tileObject.getId() == ObjectID.MATURE_DIGWEED) {
+            WorldPoint worldLocation = tileObject.getWorldLocation();
             client.setHintArrow(worldLocation);
         }
 
-        switch (gameObject.getId()) {
+        switch (tileObject.getId()) {
             case ObjectID.CONVEYOR_BELT_54917:
                 // Only add 2 conveyor belts since there's 2 with the same id
                 if (conveyorBelts.size() < 2)
-                    conveyorBelts.add(gameObject);
+                    conveyorBelts.add(tileObject);
                 break;
             case ObjectID.MOX_LEVER:
-                levers.put(Ingredient.MOX, gameObject);
+                levers.put(Ingredient.MOX, tileObject);
                 break;
             case 55393:
-                levers.put(Ingredient.AGA, gameObject);
+                levers.put(Ingredient.AGA, tileObject);
                 break;
             case ObjectID.LYE_LEVER:
-                levers.put(Ingredient.LYE, gameObject);
+                levers.put(Ingredient.LYE, tileObject);
                 break;
             case 55389:
-                machines.put(Process.CONCENTRATE, gameObject);
+                machines.put(Process.CONCENTRATE, tileObject);
                 break;
             case 55390:
-                machines.put(Process.HOMOGENISE, gameObject);
+                machines.put(Process.HOMOGENISE, tileObject);
                 break;
             case 55391:
-                machines.put(Process.CRYSTALISE, gameObject);
+                machines.put(Process.CRYSTALISE, tileObject);
                 break;
             case 55395:
-                mixer = gameObject;
+                mixer = tileObject;
                 break;
         }
     }
@@ -372,17 +378,12 @@ public class MixologyHelperPlugin extends Plugin {
         return orders.get(bestOrderIndex);
     }
 
-    public GameObject getLever(Ingredient ingredient) {
+    public TileObject getLever(Ingredient ingredient) {
         return levers.get(ingredient);
     }
 
-    public GameObject getMachine(Process process) {
+    public TileObject getMachine(Process process) {
         return machines.get(process);
-    }
-
-    @Provides
-    MixologyHelperConfig provideConfig(ConfigManager configManager) {
-        return configManager.getConfig(MixologyHelperConfig.class);
     }
 
     private void updateInfoboxes() {
@@ -413,5 +414,10 @@ public class MixologyHelperPlugin extends Plugin {
                 bestOrderInfoBox = null;
             }
         }
+    }
+
+    @Provides
+    MixologyHelperConfig provideConfig(ConfigManager configManager) {
+        return configManager.getConfig(MixologyHelperConfig.class);
     }
 }

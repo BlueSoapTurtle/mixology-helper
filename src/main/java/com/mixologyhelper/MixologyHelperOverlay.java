@@ -1,8 +1,6 @@
 package com.mixologyhelper;
 
-import net.runelite.api.Client;
-import net.runelite.api.GameObject;
-import net.runelite.api.Perspective;
+import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.widgets.Widget;
@@ -81,7 +79,7 @@ class MixologyHelperOverlay extends Overlay {
         for (Map.Entry<Ingredient, List<Integer>> entry : leverSteps.entrySet()) {
             Ingredient ingredient = entry.getKey();
             List<Integer> steps = entry.getValue();
-            GameObject lever = plugin.getLever(ingredient);
+            TileObject lever = plugin.getLever(ingredient);
             if (lever == null) {
                 continue;
             }
@@ -146,7 +144,7 @@ class MixologyHelperOverlay extends Overlay {
         boolean currentStep = plugin.getCurrentStep() == MixologyStep.PROCESS_POTION || plugin.getCurrentStep() == MixologyStep.PROCESSING_POTION;
         Color color = currentStep ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.PROGRESS_INPROGRESS_COLOR;
         Process process = order.getProcess();
-        GameObject machine = plugin.getMachine(process);
+        TileObject machine = plugin.getMachine(process);
         highlightGameObject(graphics, machine, process.getMachine() + process.getExtraInstructions(), color, currentStep);
     }
 
@@ -160,41 +158,41 @@ class MixologyHelperOverlay extends Overlay {
         Color color = currentStep ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.PROGRESS_INPROGRESS_COLOR;
 
         boolean drawArrow = currentStep;
-        for (GameObject conveyorBelt : plugin.getConveyorBelts()) {
+        for (TileObject conveyorBelt : plugin.getConveyorBelts()) {
             highlightGameObject(graphics, conveyorBelt, "Deliver Potion", color, drawArrow);
             drawArrow = false; // Only draw arrow on the first belt
         }
     }
 
-    private void highlightGameObject(Graphics2D graphics, GameObject gameObject, String text, Color color, boolean drawArrow) {
-        if (gameObject == null) {
+    private void highlightGameObject(Graphics2D graphics, TileObject tileObject, String text, Color color, boolean drawArrow) {
+        if (tileObject == null) {
             return;
         }
 
-        drawTextOverlay(graphics, gameObject, text, color);
-        drawObjectClickbox(graphics, gameObject, color);
+        drawTextOverlay(graphics, tileObject, text, color);
+        drawObjectClickbox(graphics, tileObject, color);
 
         if (drawArrow && config.showArrows()) {
-            client.setHintArrow(gameObject.getWorldLocation());
+            client.setHintArrow(tileObject.getWorldLocation());
         } else if (plugin.getCurrentStep() == MixologyStep.COMPLETED || !config.showArrows()) {
             client.clearHintArrow();
         }
     }
 
-    private void drawTextOverlay(Graphics2D graphics, GameObject gameObject, String text, Color color) {
+    private void drawTextOverlay(Graphics2D graphics, TileObject tileObject, String text, Color color) {
         // Draw the text overlay
-        LocalPoint textLocation = gameObject.getLocalLocation();
+        LocalPoint textLocation = tileObject.getLocalLocation();
         textLocation = new LocalPoint(textLocation.getX(), textLocation.getY());
         Point canvasLocation = Perspective.getCanvasTextLocation(client, graphics, textLocation, text, 100);
         OverlayUtil.renderTextLocation(graphics, canvasLocation, text, color);
     }
 
-    private void drawObjectClickbox(Graphics2D graphics, GameObject stageObject, Color color) {
-        if (stageObject == null) {
+    private void drawObjectClickbox(Graphics2D graphics, TileObject tileObject, Color color) {
+        if (tileObject == null) {
             return;
         }
 
-        Shape objectClickbox = stageObject.getClickbox();
+        Shape objectClickbox = tileObject.getClickbox();
         if (objectClickbox != null) {
             Point mousePosition = client.getMouseCanvasPosition();
             if (objectClickbox.contains(mousePosition.getX(), mousePosition.getY())) {
