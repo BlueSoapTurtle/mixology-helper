@@ -367,10 +367,6 @@ public class MixologyHelperPlugin extends Plugin {
     }
 
     public Order getbestOrder() {
-        if (orders.isEmpty() || bestOrderIndex == -1) {
-            updateOrderList();
-        }
-
         if (bestOrderIndex == -1) {
             return null;
         }
