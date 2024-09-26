@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: light)" srcset="./banner_black.png">
-    <img width=60% src="./banner_white.png">
+    <source media="(prefers-color-scheme: light)" srcset="banner_white.png">
+    <img width="60%" src="./banner_white.png">
   </picture>
 </p>
 
