@@ -228,10 +228,21 @@ public interface MixologyHelperConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "showBankedPaste",
+            name = "Show banked paste",
+            description = "Toggle showing banked paste in the panel",
+            position = 21,
+            section = displaySection
+    )
+    default boolean showBankedPaste() {
+        return false;
+    }
+
+    @ConfigItem(
             keyName = "showDebugPanel",
             name = "Show debug panel",
             description = "Toggle displaying the debug panel",
-            position = 21,
+            position = 22,
             section = displaySection
     )
     default boolean showDebugPanel() {

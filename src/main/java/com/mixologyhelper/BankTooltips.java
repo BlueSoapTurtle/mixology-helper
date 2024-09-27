@@ -119,7 +119,7 @@ public class BankTooltips extends Overlay
 	private String stackValueText(Herb herb, int qty, int gePrice)
 	{
 		// Append the ingredient name and result amount
-		int amount = herb.getResultAmount();
+		int amount = herb.getPastePerHerb();
 		itemStringBuilder.append(herb.getIngredient().getName() + ": ")
 				.append(QuantityFormatter.quantityToStackSize((long) amount * qty));
 

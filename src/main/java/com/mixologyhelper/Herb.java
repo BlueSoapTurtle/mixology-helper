@@ -20,22 +20,23 @@ public enum Herb {
     AVANTOE("Avantoe", ItemID.GRIMY_AVANTOE, ItemID.AVANTOE, ItemID.AVANTOE_POTION_UNF, Ingredient.LYE, 30),
     SNAPDRAGON("Snapdragon", ItemID.GRIMY_SNAPDRAGON, ItemID.SNAPDRAGON, ItemID.SNAPDRAGON_POTION_UNF, Ingredient.LYE, 40),
     RANARR("Ranarr weed", ItemID.GRIMY_RANARR_WEED, ItemID.RANARR_WEED, ItemID.RANARR_POTION_UNF, Ingredient.LYE, 26),
-    HUASCA("Huasca", ItemID.GRIMY_HUASCA, ItemID.HUASCA, ItemID.HUASCA_POTION_UNF, Ingredient.AGA, 20);
+    HUASCA("Huasca", ItemID.GRIMY_HUASCA, ItemID.HUASCA, ItemID.HUASCA_POTION_UNF, Ingredient.AGA, 20),
+    ;
 
     private final String name;
     private final int grimyId;
     private final int cleanId;
     private final int unfId;
     private final Ingredient ingredient;
-    private final int resultAmount;
+    private final int pastePerHerb;
 
-    Herb(String name, int grimyId, int cleanId, int unfId, Ingredient ingredient, int resultAmount) {
+    Herb(String name, int grimyId, int cleanId, int unfId, Ingredient ingredient, int pastePerHerb) {
         this.name = name;
         this.grimyId = grimyId;
         this.cleanId = cleanId;
         this.unfId = unfId;
         this.ingredient = ingredient;
-        this.resultAmount = resultAmount;
+        this.pastePerHerb = pastePerHerb;
     }
 
     public static Herb getHerbFromId(int itemId) {

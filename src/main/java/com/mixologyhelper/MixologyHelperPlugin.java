@@ -113,6 +113,9 @@ public class MixologyHelperPlugin extends Plugin {
     @Getter
     private MixologyStep currentStep = MixologyStep.ADD_INGREDIENT_1;
 
+    @Getter
+    private final Map<Ingredient, Integer> bankedPaste = new HashMap<>();
+
 
     @Override
     protected void startUp() {
@@ -159,6 +162,38 @@ public class MixologyHelperPlugin extends Plugin {
 
         // Update the order list since they might have changed the priority
         clientThread.invokeLater(this::updateBestOrder);
+    }
+
+    @Subscribe
+    public void onItemContainerChanged(ItemContainerChanged event) {
+        if (event.getContainerId() != InventoryID.BANK.getId()) {
+            return;
+        }
+        ItemContainer bank = event.getItemContainer();
+        if (bank == null) {
+            return;
+        }
+
+        bankedPaste.clear();
+        for (Item item : bank.getItems()) {
+            Herb herb = Herb.getHerbFromItem(item);
+            int pasterPer = 1;
+            Ingredient ingredient;
+            if (herb == null) {
+                ingredient = Ingredient.getIngredientFromItemId(item.getId());
+            } else {
+                pasterPer = herb.getPastePerHerb();
+                ingredient = herb.getIngredient();
+            }
+
+            if (ingredient == null) {
+                continue;
+            }
+
+            int pasteAmount = item.getQuantity() * pasterPer;
+            int currentAmount = bankedPaste.getOrDefault(ingredient, 0);
+            bankedPaste.put(ingredient, currentAmount + pasteAmount);
+        }
     }
 
     @Subscribe
