@@ -50,8 +50,9 @@ class MixologyHelperDebugPanel extends OverlayPanel {
         int orderSize = plugin.getOrders().size();
         panelComponent.getChildren().add(LineComponent.builder().left("Orders:").leftColor(color).right(String.valueOf(orderSize)).build());
 
-        int bestOrderIndex = plugin.getBestOrderIndex();
-        panelComponent.getChildren().add(LineComponent.builder().left("Best Order Index:").leftColor(color).right(String.valueOf(bestOrderIndex)).build());
+        Order bestOrder = plugin.getbestOrder();
+        String order = bestOrder == null ? "None" : (bestOrder.getRecipe().getName() + " " + bestOrder.getRecipe().getShortName());
+        panelComponent.getChildren().add(LineComponent.builder().left("Best Order:").leftColor(color).right(order).build());
 
 
         panelComponent.setPreferredSize(new Dimension(300, 200));
