@@ -36,6 +36,8 @@ The **Mixology Helper** plugin assists players in efficiently completing the Mas
     - Toggle showing GP cost per paste
 
 # Pictures
+<img width=750px src="./readme_images/game_screenshot.png">
+
 Levers Highlight              |  Mixer Highlight
 :-------------------------:|:-------------------------:
 <img src="./readme_images/levers_highlight.png" width="350px"/>|<img src="./readme_images/mixer_highlight.png" width="350px"/>
@@ -48,9 +50,9 @@ Resin Progress Tracking |  Bank Tooltips
 :-------------------------:|:-------------------------:
 <img width=350px src="./readme_images/resin_tracking.png">|<img width=350px src="./readme_images/bank_tooltip.png">
 
-Banked Paste |  ---
+Banked Paste |  Full Panel Image
 :-------------------------:|:-------------------------:
-<img width=350px src="./readme_images/banked_paste.png">|---
+<img width=350px src="./readme_images/banked_paste.png">|<img width=350px src="./readme_images/full_panel.png">
 
 # Plugin Features in Detail
 
