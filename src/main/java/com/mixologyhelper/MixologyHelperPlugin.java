@@ -175,8 +175,6 @@ public class MixologyHelperPlugin extends Plugin {
         currentRecipe = null;
         currentStep = MixologyStep.ADD_INGREDIENT_1;
         client.clearHintArrow();
-        // Trying to delay this since it runs before we get a new list
-        clientThread.invokeLater(this::updateOrderList);
     }
 
     @Subscribe
