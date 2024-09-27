@@ -5,7 +5,6 @@ import lombok.Getter;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
-import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
@@ -33,6 +32,8 @@ public class MixologyHelperPlugin extends Plugin {
     private ClientThread clientThread;
     @Inject
     private MixologyHelperOverlay overlay;
+    @Inject
+    private BankTooltips bankTooltips;
     @Inject
     private MixologyHelperPanel panel;
     @Inject
@@ -118,6 +119,7 @@ public class MixologyHelperPlugin extends Plugin {
         overlayManager.add(overlay);
         overlayManager.add(panel);
         overlayManager.add(debugPanel);
+        overlayManager.add(bankTooltips);
     }
 
     @Override
@@ -125,20 +127,18 @@ public class MixologyHelperPlugin extends Plugin {
         overlayManager.remove(overlay);
         overlayManager.remove(panel);
         overlayManager.remove(debugPanel);
+        overlayManager.remove(bankTooltips);
     }
 
     @Subscribe
-    public void onGameStateChanged(GameStateChanged event)
-    {
-        if (event.getGameState().equals(GameState.LOGGED_IN))
-        {
+    public void onGameStateChanged(GameStateChanged event) {
+        if (event.getGameState().equals(GameState.LOGGED_IN)) {
             resetPotionState();
         }
     }
 
     @Subscribe
-    public void onStatChanged(StatChanged statChanged)
-    {
+    public void onStatChanged(StatChanged statChanged) {
         // Update order list when herblore level changes
         // This also fixes the best order not updating on login
         if (statChanged.getSkill() == Skill.HERBLORE) {

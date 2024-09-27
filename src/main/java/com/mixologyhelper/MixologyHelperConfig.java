@@ -10,9 +10,52 @@ public interface MixologyHelperConfig extends Config {
     String GROUP = "mixologyhelper";
 
     @ConfigSection(
+            name = "Tooltip Options",
+            description = "Settings tooltips",
+            position = 0
+    )
+    String tooltipSection = "tooltipSection";
+
+    @ConfigItem(
+            keyName = "showTooltip",
+            name = "Show Paste Tooltips",
+            description = "Herbs should show how much paste they give on tooltips",
+            position = 1,
+            section = tooltipSection
+    )
+    default boolean showTooltip()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "showTooltipEach",
+            name = "Show how much paste each herb gives",
+            description = "The tooltip will also show how much paste each item gives, ex 50k (10 ea)",
+            position = 2,
+            section = tooltipSection
+    )
+    default boolean showTooltipEach()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "showPricePerPaste",
+            name = "Show GE price per paste",
+            description = "Adds a line to the tooltip showing the GE price per paste",
+            position = 3,
+            section = tooltipSection
+    )
+    default boolean showPricePerPaste()
+    {
+        return true;
+    }
+
+    @ConfigSection(
             name = "Highlight Options",
             description = "Settings to control highlighting",
-            position = 0
+            position = 4
     )
     String highlightSection = "highlightSection";
 
@@ -20,7 +63,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showLevers",
             name = "Highlight Levers",
             description = "Toggle highlighting of levers",
-            position = 1,
+            position = 5,
             section = highlightSection
     )
     default boolean showLevers() {
@@ -31,7 +74,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showMixer",
             name = "Highlight Mixer",
             description = "Toggle highlighting of the mixer",
-            position = 2,
+            position = 6,
             section = highlightSection
     )
     default boolean showMixer() {
@@ -42,7 +85,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showMachines",
             name = "Highlight Machines",
             description = "Toggle highlighting of processing machines",
-            position = 3,
+            position = 7,
             section = highlightSection
     )
     default boolean showMachines() {
@@ -53,7 +96,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showConveyorBelt",
             name = "Highlight Conveyor Belt",
             description = "Toggle highlighting of the conveyor belt",
-            position = 4,
+            position = 8,
             section = highlightSection
     )
     default boolean showConveyorBelt() {
@@ -64,7 +107,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showArrows",
             name = "Show Arrows",
             description = "Toggle showing arrows on the next object",
-            position = 5,
+            position = 9,
             section = highlightSection
     )
     default boolean showArrows() {
@@ -74,7 +117,7 @@ public interface MixologyHelperConfig extends Config {
     @ConfigSection(
             name = "Priority Options",
             description = "Settings to prioritize certain potions",
-            position = 6
+            position = 10
     )
     String prioritySection = "prioritySection";
 
@@ -82,7 +125,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "priorityType",
             name = "Priority Type",
             description = "Select priority between Experience or Ingredient",
-            position = 7,
+            position = 11,
             section = prioritySection
     )
     default PriorityType priorityType() {
@@ -93,7 +136,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "priorityIngredient",
             name = "Priority Ingredient",
             description = "Select ingredient to prioritize",
-            position = 8,
+            position = 12,
             section = prioritySection
     )
     default Ingredient priorityIngredient() {
@@ -103,7 +146,7 @@ public interface MixologyHelperConfig extends Config {
     @ConfigSection(
             name = "Display Options",
             description = "Settings for panel display",
-            position = 9
+            position = 13
     )
     String displaySection = "displaySection";
 
@@ -111,7 +154,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showPanel",
             name = "Show panel",
             description = "Toggle displaying the panel",
-            position = 10,
+            position = 14,
             section = displaySection
     )
     default boolean showPanel() {
@@ -122,7 +165,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showPotionExp",
             name = "Show Potion Experience",
             description = "Toggle displaying how much experience a potion will give",
-            position = 11,
+            position = 15,
             section = displaySection
     )
     default boolean showPotionExp() {
@@ -133,7 +176,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "selectedReward",
             name = "Selected Reward",
             description = "Select a reward to track resin for",
-            position = 12,
+            position = 16,
             section = displaySection
     )
     default Reward selectedReward() {
@@ -144,7 +187,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "goalDisplayFormat",
             name = "Goal Display Format",
             description = "Choose how to display the goal progress",
-            position = 13,
+            position = 17,
             section = displaySection
     )
     default GoalDisplayFormat goalDisplayFormat() {
@@ -155,7 +198,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showOrdersFulfilled",
             name = "Show Orders Fulfilled",
             description = "Toggle showing the orders fulfilled in the panel",
-            position = 14,
+            position = 18,
             section = displaySection
     )
     default boolean showOrdersFulfilled() {
@@ -166,7 +209,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showOrdersFulfilledInfobox",
             name = "Show Orders Fulfilled Infobox",
             description = "Toggle showing an infobox with the orders fulfilled",
-            position = 15,
+            position = 19,
             section = displaySection
     )
     default boolean showOrdersFulfilledInfobox() {
@@ -177,7 +220,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showBestOrderInfobox",
             name = "Show Best Order Infobox",
             description = "Toggle showing an infobox with the best order and its details",
-            position = 16,
+            position = 20,
             section = displaySection
     )
     default boolean showBestOrderInfobox() {
@@ -188,7 +231,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showDebugPanel",
             name = "Show debug panel",
             description = "Toggle displaying the debug panel",
-            position = 17,
+            position = 21,
             section = displaySection
     )
     default boolean showDebugPanel() {
