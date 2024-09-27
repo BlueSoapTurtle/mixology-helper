@@ -41,10 +41,11 @@ public enum Recipe {
     }
 
     public static Recipe getRecipeFromName(String name) {
-        // Replace the <str> and </str> tags from the name
-        name = name.replace("<str>", "").replace("</str>", "");
+        // Use regex to remove all tags like <col=6800bf>, <str>, </col>, and </str>
+        name = name.replaceAll("<[^>]+>", "");  // This will remove everything within <>
+
         for (Recipe recipe : Recipe.values()) {
-            if (recipe.getName().equalsIgnoreCase(name)) {
+            if (recipe.getName().equalsIgnoreCase(name.trim())) {  // Using trim() to remove extra spaces
                 return recipe;
             }
         }
