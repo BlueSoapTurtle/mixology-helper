@@ -1,5 +1,7 @@
-package com.mixologyhelper;
+package com.mixologyhelper.ui;
 
+import com.mixologyhelper.*;
+import com.mixologyhelper.data.*;
 import net.runelite.api.Client;
 import net.runelite.api.Skill;
 import net.runelite.client.ui.overlay.OverlayPanel;
@@ -12,7 +14,7 @@ import javax.inject.Inject;
 import java.awt.*;
 import java.util.List;
 
-class MixologyHelperPanel extends OverlayPanel {
+public class MixologyHelperPanel extends OverlayPanel {
     private final Client client;
     private final MixologyHelperPlugin plugin;
     private final MixologyHelperConfig config;

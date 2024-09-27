@@ -1,5 +1,8 @@
-package com.mixologyhelper;
+package com.mixologyhelper.ui;
 
+import com.mixologyhelper.*;
+import com.mixologyhelper.data.*;
+import com.mixologyhelper.data.Process;
 import net.runelite.api.*;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
@@ -18,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-class MixologyHelperOverlay extends Overlay {
+public class MixologyHelperOverlay extends Overlay {
     private final Client client;
     private final MixologyHelperPlugin plugin;
     private final MixologyHelperConfig config;

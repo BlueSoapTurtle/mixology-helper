@@ -1,4 +1,4 @@
-package com.mixologyhelper;
+package com.mixologyhelper.data;
 
 import lombok.Getter;
 

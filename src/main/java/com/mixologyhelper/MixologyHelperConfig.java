@@ -1,5 +1,9 @@
 package com.mixologyhelper;
 
+import com.mixologyhelper.data.GoalDisplayFormat;
+import com.mixologyhelper.data.Ingredient;
+import com.mixologyhelper.data.PriorityType;
+import com.mixologyhelper.data.Reward;
 import net.runelite.client.config.Config;
 import net.runelite.client.config.ConfigGroup;
 import net.runelite.client.config.ConfigItem;

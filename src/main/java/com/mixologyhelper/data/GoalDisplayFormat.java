@@ -1,4 +1,4 @@
-package com.mixologyhelper;
+package com.mixologyhelper.data;
 
 public enum GoalDisplayFormat {
     LEFT("Remaining"),

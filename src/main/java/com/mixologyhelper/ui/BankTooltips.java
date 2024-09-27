@@ -1,5 +1,7 @@
-package com.mixologyhelper;
+package com.mixologyhelper.ui;
 
+import com.mixologyhelper.data.Herb;
+import com.mixologyhelper.MixologyHelperConfig;
 import net.runelite.api.*;
 import net.runelite.api.widgets.ComponentID;
 import net.runelite.api.widgets.InterfaceID;

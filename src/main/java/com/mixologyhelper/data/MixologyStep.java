@@ -1,4 +1,4 @@
-package com.mixologyhelper;
+package com.mixologyhelper.data;
 
 public enum MixologyStep {
     ADD_INGREDIENT_1,

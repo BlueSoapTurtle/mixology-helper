@@ -1,6 +1,9 @@
 package com.mixologyhelper;
 
 import com.google.inject.Provides;
+import com.mixologyhelper.data.*;
+import com.mixologyhelper.data.Process;
+import com.mixologyhelper.ui.*;
 import lombok.Getter;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -102,7 +105,7 @@ public class MixologyHelperPlugin extends Plugin {
     @Getter
     private final Map<Ingredient, TileObject> levers = new HashMap<>();
     @Getter
-    private final Map<Process, TileObject> machines = new HashMap<>();
+    private final Map<com.mixologyhelper.data.Process, TileObject> machines = new HashMap<>();
     @Getter
     private TileObject mixer;
 
@@ -287,7 +290,7 @@ public class MixologyHelperPlugin extends Plugin {
     }
 
     private void updateProcessFromVarbit(int value, int i) {
-        Process process = Process.getProcessFromId(value);
+        com.mixologyhelper.data.Process process = com.mixologyhelper.data.Process.getProcessFromId(value);
         if (process != null) {
             orders.get(i).setProcess(process);
         }
@@ -399,13 +402,13 @@ public class MixologyHelperPlugin extends Plugin {
                 levers.put(Ingredient.LYE, tileObject);
                 break;
             case 55389:
-                machines.put(Process.CONCENTRATE, tileObject);
+                machines.put(com.mixologyhelper.data.Process.CONCENTRATE, tileObject);
                 break;
             case 55390:
-                machines.put(Process.HOMOGENISE, tileObject);
+                machines.put(com.mixologyhelper.data.Process.HOMOGENISE, tileObject);
                 break;
             case 55391:
-                machines.put(Process.CRYSTALISE, tileObject);
+                machines.put(com.mixologyhelper.data.Process.CRYSTALISE, tileObject);
                 break;
             case 55395:
                 mixer = tileObject;
