@@ -142,7 +142,7 @@ public class MixologyHelperPlugin extends Plugin {
         // Update order list when herblore level changes
         // This also fixes the best order not updating on login
         if (statChanged.getSkill() == Skill.HERBLORE) {
-            updateOrderList();
+            updateBestOrder();
         }
     }
 
@@ -158,7 +158,7 @@ public class MixologyHelperPlugin extends Plugin {
         }
 
         // Update the order list since they might have changed the priority
-        clientThread.invokeLater(this::updateOrderList);
+        clientThread.invokeLater(this::updateBestOrder);
     }
 
     @Subscribe
@@ -248,7 +248,7 @@ public class MixologyHelperPlugin extends Plugin {
         if (recipe != null) {
             orders.get(i).setRecipe(recipe);
         }
-        updateOrderList();
+        updateBestOrder();
     }
 
     private void updateProcessFromVarbit(int value, int i) {
@@ -256,7 +256,7 @@ public class MixologyHelperPlugin extends Plugin {
         if (process != null) {
             orders.get(i).setProcess(process);
         }
-        updateOrderList();
+        updateBestOrder();
     }
 
     private void updateCurrentStep() {
@@ -294,12 +294,7 @@ public class MixologyHelperPlugin extends Plugin {
         }
     }
 
-    public void updateOrderList() {
-        Widget orderWidget = client.getWidget(ORDER_WIDGET_ID);
-        if (orderWidget == null || orderWidget.isHidden() || orderWidget.getChildren() == null) {
-            return;
-        }
-
+    public void updateBestOrder() {
         // Find the best order based on priority
         bestOrderIndex = -1;
         for (int i = 0; i < orders.size(); i++) {
