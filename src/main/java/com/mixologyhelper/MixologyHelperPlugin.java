@@ -128,6 +128,25 @@ public class MixologyHelperPlugin extends Plugin {
     }
 
     @Subscribe
+    public void onGameStateChanged(GameStateChanged event)
+    {
+        if (event.getGameState().equals(GameState.LOGGED_IN))
+        {
+            resetPotionState();
+        }
+    }
+
+    @Subscribe
+    public void onStatChanged(StatChanged statChanged)
+    {
+        // Update order list when herblore level changes
+        // This also fixes the best order not updating on login
+        if (statChanged.getSkill() == Skill.HERBLORE) {
+            updateOrderList();
+        }
+    }
+
+    @Subscribe
     protected void onConfigChanged(ConfigChanged configChanged) {
         if (!MixologyHelperConfig.GROUP.equals(configChanged.getGroup())) {
             return;
