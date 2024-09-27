@@ -1,28 +1,28 @@
 package com.mixologyhelper.ui;
 
 import com.mixologyhelper.MixologyHelperPlugin;
-import com.mixologyhelper.data.Recipe;
+import com.mixologyhelper.data.Order;
 import net.runelite.client.ui.overlay.infobox.Counter;
 
 import java.awt.image.BufferedImage;
 
 public class BestOrderInfoBox extends Counter {
-    private final Recipe recipe;
+    private final Order order;
 
-    public BestOrderInfoBox(MixologyHelperPlugin plugin, BufferedImage image, Recipe recipe) {
+    public BestOrderInfoBox(MixologyHelperPlugin plugin, BufferedImage image, Order order) {
         super(image, plugin, 1);  // No count since this is the best order
-        this.recipe = recipe;
+        this.order = order;
     }
 
     @Override
     public String getTooltip() {
-        return recipe.getName() + "</br>" +
-                "Ingredients: " + recipe.getShortName() + "</br>" +
-                "Exp: " + recipe.getExp();
+        return order.getRecipe().getName() + "</br>" +
+                "Ingredients: " + order.getRecipe().getShortName() + "</br>" +
+                "Exp: " + order.getExp();
     }
 
     @Override
     public String getText() {
-        return recipe.getShortName();
+        return order.getRecipe().getShortName();
     }
 }

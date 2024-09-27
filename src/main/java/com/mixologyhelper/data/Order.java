@@ -21,7 +21,7 @@ public class Order {
     }
 
     public int getExp() {
-        return recipe.getExp();
+        return recipe.getExp() + process.getPotentialExp();
     }
 
     public int getResin(Ingredient ingredient) {

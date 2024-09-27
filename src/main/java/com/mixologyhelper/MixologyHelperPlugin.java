@@ -347,7 +347,8 @@ public class MixologyHelperPlugin extends Plugin {
             }
 
             if (config.priorityType() == PriorityType.EXPERIENCE) {
-                if (order.getRecipe().getExp() > orders.get(bestOrderIndex).getRecipe().getExp()) {
+                // If same exp, prioritize Concentrate(+20 exp) > Crystalise(+14 exp) > Homogenise(+0 exp)
+                if (order.getExp() > orders.get(bestOrderIndex).getExp()) {
                     bestOrderIndex = i;
                 }
             } else if (config.priorityType() == PriorityType.INGREDIENT) {
@@ -359,7 +360,7 @@ public class MixologyHelperPlugin extends Plugin {
                     bestOrderIndex = i;
                 } else if (currentOrderIngredientCount == bestOrderIngredientCount) {
                     // Tie-breaker: higher experience
-                    if (order.getRecipe().getExp() > orders.get(bestOrderIndex).getRecipe().getExp()) {
+                    if (order.getExp() > orders.get(bestOrderIndex).getExp()) {
                         bestOrderIndex = i;
                     }
                 }
@@ -453,7 +454,7 @@ public class MixologyHelperPlugin extends Plugin {
                 if (bestOrderImage == null) {
                     bestOrderImage = ImageUtil.loadImageResource(getClass(), "orders_completed.png");
                 }
-                bestOrderInfoBox = new BestOrderInfoBox(this, bestOrderImage, bestOrder.getRecipe());
+                bestOrderInfoBox = new BestOrderInfoBox(this, bestOrderImage, bestOrder);
                 infoBoxManager.addInfoBox(bestOrderInfoBox);
             } else if (bestOrderInfoBox != null) {
                 infoBoxManager.removeInfoBox(bestOrderInfoBox);
