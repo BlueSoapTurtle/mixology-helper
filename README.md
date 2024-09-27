@@ -20,11 +20,20 @@ The **Mixology Helper** plugin assists players in efficiently completing the Mas
   - Displays the **current potion order list**, highlighting the best order and showing experience gained for each.
   - Automatically tracks **mature digweed spawn**, notifying players to collect it for extra experience and resin bonuses.
   - Tracks **number of potions completed**, helping players monitor their achievements and providing an infobox for quick reference.
+- **Bank Tooltips and Paste Tracking**
+  - Displays tooltips (toggleable) when hovering over **grimy herbs**, **clean herbs**, or **unfinished potions** in the bank, showing:
+    - Total paste obtainable from the stack and type (Mox, Aga, Lye) as well as per item
+    - GP cost per paste based on current item prices
+  - Shows the total amount of **banked paste** for each type (Mox, Aga, Lye) in the panel
 - **Configurable Display Options**
-  - **Toggle to show/hide** potion orders, completed orders, and other elements on the info panel.
+  - **Toggle to show/hide** potion orders, completed orders, banked paste amounts, and other elements on the info panel.
   - Configurable **goal tracking** that allows players to set their resin goal for rewards, with options to hide completed resin amounts.
   - Customizable **infoboxes** for showing completed orders, best order to craft, and resin goal tracking.
   - **Notifications** for when mature digweed spawns, alerting players to collect it in time.
+  - **Bank Tooltip Settings**:
+    - Toggle bank tooltips on or off
+    - Toggle displaying per-item paste amounts
+    - Toggle showing GP cost per paste
 
 # Pictures
 Levers Highlight              |  Mixer Highlight
@@ -35,9 +44,13 @@ Potion Order Display  |  Best Order Infobox
 :-------------------------:|:-------------------------:
 <img width=350px src="./readme_images/potion_orders.png">|<img width=350px src="./readme_images/best_order_infobox.png">
 
-Resin Progress Tracking |  Mature Digweed Notification
+Resin Progress Tracking |  Bank Tooltips
 :-------------------------:|:-------------------------:
-<img width=350px src="./readme_images/resin_tracking.png">|Adding once I catch one
+<img width=350px src="./readme_images/resin_tracking.png">|<img width=350px src="./readme_images/bank_tooltip.png">
+
+Banked Paste |  ---
+:-------------------------:|:-------------------------:
+<img width=350px src="./readme_images/banked_paste.png">|---
 
 # Plugin Features in Detail
 
