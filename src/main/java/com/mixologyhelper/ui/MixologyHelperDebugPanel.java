@@ -1,6 +1,7 @@
 package com.mixologyhelper.ui;
 
-import com.mixologyhelper.*;
+import com.mixologyhelper.MixologyHelperConfig;
+import com.mixologyhelper.MixologyHelperPlugin;
 import com.mixologyhelper.data.MixologyStep;
 import com.mixologyhelper.data.Order;
 import com.mixologyhelper.data.Recipe;

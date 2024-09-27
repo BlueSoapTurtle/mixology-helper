@@ -1,9 +1,14 @@
 package com.mixologyhelper;
 
 import com.google.inject.Provides;
-import com.mixologyhelper.data.*;
 import com.mixologyhelper.data.Process;
-import com.mixologyhelper.ui.*;
+import com.mixologyhelper.data.*;
+import com.mixologyhelper.ui.BankTooltips;
+import com.mixologyhelper.ui.MixologyHelperDebugPanel;
+import com.mixologyhelper.ui.MixologyHelperOverlay;
+import com.mixologyhelper.ui.MixologyHelperPanel;
+import com.mixologyhelper.ui.infobox.BestOrderInfoBox;
+import com.mixologyhelper.ui.infobox.OrderFulfilledInfoBox;
 import lombok.Getter;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -22,6 +27,9 @@ import javax.inject.Inject;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
+import static com.mixologyhelper.Constants.*;
+
+@Getter
 @PluginDescriptor(
         name = "Mixology Helper",
         description = "Helper plugin for the Mastering Mixology minigame"
@@ -45,80 +53,42 @@ public class MixologyHelperPlugin extends Plugin {
     private MixologyHelperConfig config;
     @Inject
     private ConfigManager configManager;
+
+    // Infoboxes
     @Inject
     private InfoBoxManager infoBoxManager;
     private OrderFulfilledInfoBox orderFulfilledInfoBox;
     private BestOrderInfoBox bestOrderInfoBox;
 
 
-    // All the varbits!
-    private static final int MOX_PASTE_VARBIT = 11321;
-    private static final int AGA_PASTE_VARBIT = 11322;
-    private static final int LYE_PASTE_VARBIT = 11323;
-    private static final int MOX_RESIN_VARBIT = 4416;
-    private static final int AGA_RESIN_VARBIT = 4415;
-    private static final int LYE_RESIN_VARBIT = 4414;
-    private static final int POTIONS_MADE_VARBIT = 4480;
-    private static final int INGREDIENT_1_CHANGED = 11324;
-    private static final int INGREDIENT_2_CHANGED = 11325;
-    private static final int INGREDIENT_3_CHANGED = 11326;
-    private static final int RECIPE_VARBIT = 11339;
-    private static final int RECIPE_1_VARBIT = 11315;
-    private static final int PROCESS_1_VARBIT = 11316;
-    private static final int RECIPE_2_VARBIT = 11317;
-    private static final int PROCESS_2_VARBIT = 11318;
-    private static final int RECIPE_3_VARBIT = 11319;
-    private static final int PROCESS_3_VARBIT = 11320;
-    private static final int DIGWEED_SOUND_EFFECT = 3283; // anma_puzzle_complete sound effect
-
-
     // Player data
-    @Getter
     private int moxPaste;
-    @Getter
     private int agaPaste;
-    @Getter
     private int lyePaste;
-    @Getter
     private int moxResin;
-    @Getter
     private int agaResin;
-    @Getter
     private int lyeResin;
-    @Getter
     private int potionsMade;
+    private final Map<Ingredient, Integer> bankedPaste = new HashMap<>();
+
 
     // Info about current potion in the mixer
-    @Getter
     private int ingredient1;
-    @Getter
     private int ingredient2;
-    @Getter
     private int ingredient3;
-    @Getter
     private Recipe currentRecipe = null;
 
 
     // The objects
-    @Getter
     private final List<TileObject> conveyorBelts = new ArrayList<>();
-    @Getter
     private final Map<Ingredient, TileObject> levers = new HashMap<>();
-    @Getter
-    private final Map<com.mixologyhelper.data.Process, TileObject> machines = new HashMap<>();
-    @Getter
+    private final Map<Process, TileObject> machines = new HashMap<>();
     private TileObject mixer;
 
-    @Getter
+    // Order list and state
     List<Order> orders = Arrays.asList(new Order(), new Order(), new Order());
-    @Getter
     int bestOrderIndex = -1;
-    @Getter
     private MixologyStep currentStep = MixologyStep.ADD_INGREDIENT_1;
-
-    @Getter
-    private final Map<Ingredient, Integer> bankedPaste = new HashMap<>();
-
 
     @Override
     protected void startUp() {
@@ -139,7 +109,8 @@ public class MixologyHelperPlugin extends Plugin {
     @Subscribe
     public void onGameStateChanged(GameStateChanged event) {
         if (event.getGameState().equals(GameState.LOGGED_IN)) {
-            resetPotionState();
+            // Reset state on login
+            resetState();
         }
     }
 
@@ -154,17 +125,15 @@ public class MixologyHelperPlugin extends Plugin {
 
     @Subscribe
     protected void onConfigChanged(ConfigChanged configChanged) {
-        if (!MixologyHelperConfig.GROUP.equals(configChanged.getGroup())) {
-            return;
-        }
+        if (MixologyHelperConfig.GROUP.equals(configChanged.getGroup())) {
+            // Remove the arrow if the user disables it
+            if (!config.showArrows()) {
+                client.clearHintArrow();
+            }
 
-        // Remove the arrow if the user disables it
-        if (!config.showArrows()) {
-            client.clearHintArrow();
+            // Update the order list since they might have changed the priority
+            clientThread.invokeLater(this::updateBestOrder);
         }
-
-        // Update the order list since they might have changed the priority
-        clientThread.invokeLater(this::updateBestOrder);
     }
 
     @Subscribe
@@ -212,26 +181,25 @@ public class MixologyHelperPlugin extends Plugin {
         } else if (message.startsWith("You finish") && (message.contains("concentrating") || message.contains("homogenising") || message.contains("crystallising"))) {
             // Player finished processing the potion
             currentStep = MixologyStep.DELIVER_POTION;
-        } else if (message.startsWith("You deposit some") && message.contains("and fulfil an order")) {
+        } else if (message.startsWith("You deposit some") && (message.contains("and fulfil an order") || message.contains("but fail to fulfil an order"))) {
             // Player delivered the potion successfully
             currentStep = MixologyStep.COMPLETED;
             // Reset for next potion
-            resetPotionState();
-        } else if (message.startsWith("You deposit some") && message.contains("but fail to fulfil an order")) {
-            // Player delivered the wrong potion
-            currentStep = MixologyStep.COMPLETED;
-            // Reset for next potion
-            resetPotionState();
+            resetState();
         }
     }
 
-    private void resetPotionState() {
-        ingredient1 = 0;
-        ingredient2 = 0;
-        ingredient3 = 0;
-        currentRecipe = null;
+    private void resetState() {
         currentStep = MixologyStep.ADD_INGREDIENT_1;
         client.clearHintArrow();
+    }
+
+    @Subscribe
+    public void onGraphicsObjectCreated(GraphicsObjectCreated graphicsObjectCreated) {
+        GraphicsObject graphicsObject = graphicsObjectCreated.getGraphicsObject();
+        if (graphicsObject.getId() == ObjectID.MATURE_DIGWEED) {
+            client.playSoundEffect(DIGWEED_SOUND_EFFECT);
+        }
     }
 
     @Subscribe
@@ -266,18 +234,65 @@ public class MixologyHelperPlugin extends Plugin {
         } else if (varbitId == RECIPE_VARBIT) {
             currentRecipe = Recipe.getRecipeFromId(value);
             updateCurrentStep();
-        } else if (varbitId == RECIPE_1_VARBIT && value != 0) {
+        } else if (varbitId == ORDER_1_RECIPE_VARBIT && value != 0) {
             updateRecipeFromVarbit(value, 0);
-        } else if (varbitId == PROCESS_1_VARBIT && value != 0) {
+        } else if (varbitId == ORDER_1_PROCESS_VARBIT && value != 0) {
             updateProcessFromVarbit(value, 0);
-        } else if (varbitId == RECIPE_2_VARBIT && value != 0) {
+        } else if (varbitId == ORDER_2_RECIPE_VARBIT && value != 0) {
             updateRecipeFromVarbit(value, 1);
-        } else if (varbitId == PROCESS_2_VARBIT && value != 0) {
+        } else if (varbitId == ORDER_2_PROCESS_VARBIT && value != 0) {
             updateProcessFromVarbit(value, 1);
-        } else if (varbitId == RECIPE_3_VARBIT && value != 0) {
+        } else if (varbitId == ORDER_3_RECIPE_VARBIT && value != 0) {
             updateRecipeFromVarbit(value, 2);
-        } else if (varbitId == PROCESS_3_VARBIT && value != 0) {
+        } else if (varbitId == ORDER_3_PROCESS_VARBIT && value != 0) {
             updateProcessFromVarbit(value, 2);
+        }
+    }
+
+    @Subscribe
+    public void onDecorativeObjectSpawned(DecorativeObjectSpawned event) {
+        TileObject tileObject = event.getDecorativeObject();
+
+        if (tileObject.getId() == ObjectID.AGA_LEVER) {
+            levers.put(Ingredient.AGA, tileObject);
+        }
+    }
+
+    @Subscribe
+    public void onGameObjectSpawned(GameObjectSpawned event) {
+        final TileObject tileObject = event.getGameObject();
+        if (tileObject.getId() == ObjectID.MATURE_DIGWEED) {
+            WorldPoint worldLocation = tileObject.getWorldLocation();
+            client.setHintArrow(worldLocation);
+        }
+
+        switch (tileObject.getId()) {
+            case ObjectID.CONVEYOR_BELT_54917:
+                // Only add 2 conveyor belts since there's 2 with the same id
+                if (conveyorBelts.size() < 2)
+                    conveyorBelts.add(tileObject);
+                break;
+            case ObjectID.MOX_LEVER:
+                levers.put(Ingredient.MOX, tileObject);
+                break;
+            case 55393:
+                levers.put(Ingredient.AGA, tileObject);
+                break;
+            case ObjectID.LYE_LEVER:
+                levers.put(Ingredient.LYE, tileObject);
+                break;
+            case 55389:
+                machines.put(Process.CONCENTRATE, tileObject);
+                break;
+            case 55390:
+                machines.put(Process.HOMOGENISE, tileObject);
+                break;
+            case 55391:
+                machines.put(Process.CRYSTALISE, tileObject);
+                break;
+            case 55395:
+                mixer = tileObject;
+                break;
         }
     }
 
@@ -290,7 +305,7 @@ public class MixologyHelperPlugin extends Plugin {
     }
 
     private void updateProcessFromVarbit(int value, int i) {
-        com.mixologyhelper.data.Process process = com.mixologyhelper.data.Process.getProcessFromId(value);
+        Process process = Process.getProcessFromId(value);
         if (process != null) {
             orders.get(i).setProcess(process);
         }
@@ -321,14 +336,6 @@ public class MixologyHelperPlugin extends Plugin {
         return ingredient1 == currentRecipe.getIngredients().get(0).getId() &&
                 ingredient2 == currentRecipe.getIngredients().get(1).getId() &&
                 ingredient3 == currentRecipe.getIngredients().get(2).getId();
-    }
-
-    @Subscribe
-    public void onGraphicsObjectCreated(GraphicsObjectCreated graphicsObjectCreated) {
-        GraphicsObject graphicsObject = graphicsObjectCreated.getGraphicsObject();
-        if (graphicsObject.getId() == ObjectID.MATURE_DIGWEED) {
-            client.playSoundEffect(DIGWEED_SOUND_EFFECT);
-        }
     }
 
     public void updateBestOrder() {
@@ -369,53 +376,6 @@ public class MixologyHelperPlugin extends Plugin {
         updateInfoboxes();
     }
 
-    @Subscribe
-    public void onDecorativeObjectSpawned(DecorativeObjectSpawned event) {
-        TileObject tileObject = event.getDecorativeObject();
-
-        if (tileObject.getId() == ObjectID.AGA_LEVER) {
-            levers.put(Ingredient.AGA, tileObject);
-        }
-    }
-
-    @Subscribe
-    public void onGameObjectSpawned(GameObjectSpawned event) {
-        final TileObject tileObject = event.getGameObject();
-        if (tileObject.getId() == ObjectID.MATURE_DIGWEED) {
-            WorldPoint worldLocation = tileObject.getWorldLocation();
-            client.setHintArrow(worldLocation);
-        }
-
-        switch (tileObject.getId()) {
-            case ObjectID.CONVEYOR_BELT_54917:
-                // Only add 2 conveyor belts since there's 2 with the same id
-                if (conveyorBelts.size() < 2)
-                    conveyorBelts.add(tileObject);
-                break;
-            case ObjectID.MOX_LEVER:
-                levers.put(Ingredient.MOX, tileObject);
-                break;
-            case 55393:
-                levers.put(Ingredient.AGA, tileObject);
-                break;
-            case ObjectID.LYE_LEVER:
-                levers.put(Ingredient.LYE, tileObject);
-                break;
-            case 55389:
-                machines.put(com.mixologyhelper.data.Process.CONCENTRATE, tileObject);
-                break;
-            case 55390:
-                machines.put(com.mixologyhelper.data.Process.HOMOGENISE, tileObject);
-                break;
-            case 55391:
-                machines.put(com.mixologyhelper.data.Process.CRYSTALISE, tileObject);
-                break;
-            case 55395:
-                mixer = tileObject;
-                break;
-        }
-    }
-
     public Order getbestOrder() {
         if (bestOrderIndex == -1) {
             return null;
@@ -433,6 +393,7 @@ public class MixologyHelperPlugin extends Plugin {
     }
 
     private void updateInfoboxes() {
+        // Setup the orders fulfilled infobox
         if (config.showOrdersFulfilledInfobox()) {
             if (orderFulfilledInfoBox == null) {
                 BufferedImage fulfilledImage = ImageUtil.loadImageResource(getClass(), "orders_completed.png");
@@ -445,7 +406,7 @@ public class MixologyHelperPlugin extends Plugin {
             orderFulfilledInfoBox = null;
         }
 
-        // Need to implement this
+        // Setup the best order infobox
         if (config.showBestOrderInfobox()) {
             Order bestOrder = getbestOrder();
             if (bestOrder != null && bestOrderInfoBox == null) {

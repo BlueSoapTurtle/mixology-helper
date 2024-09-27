@@ -1,4 +1,4 @@
-package com.mixologyhelper.ui;
+package com.mixologyhelper.ui.infobox;
 
 import com.mixologyhelper.MixologyHelperPlugin;
 import com.mixologyhelper.data.Order;

@@ -27,8 +27,7 @@ public interface MixologyHelperConfig extends Config {
             position = 1,
             section = tooltipSection
     )
-    default boolean showTooltip()
-    {
+    default boolean showTooltip() {
         return true;
     }
 
@@ -39,8 +38,7 @@ public interface MixologyHelperConfig extends Config {
             position = 2,
             section = tooltipSection
     )
-    default boolean showTooltipEach()
-    {
+    default boolean showTooltipEach() {
         return true;
     }
 
@@ -51,8 +49,7 @@ public interface MixologyHelperConfig extends Config {
             position = 3,
             section = tooltipSection
     )
-    default boolean showPricePerPaste()
-    {
+    default boolean showPricePerPaste() {
         return true;
     }
 
@@ -166,10 +163,21 @@ public interface MixologyHelperConfig extends Config {
     }
 
     @ConfigItem(
+            keyName = "showOrders",
+            name = "Show Orders in the panel",
+            description = "Toggle showing all orers in the panel",
+            position = 15,
+            section = displaySection
+    )
+    default boolean showOrders() {
+        return true;
+    }
+
+    @ConfigItem(
             keyName = "showPotionExp",
             name = "Show Potion Experience",
             description = "Toggle displaying how much experience a potion will give",
-            position = 15,
+            position = 16,
             section = displaySection
     )
     default boolean showPotionExp() {
@@ -180,7 +188,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "selectedReward",
             name = "Selected Reward",
             description = "Select a reward to track resin for",
-            position = 16,
+            position = 17,
             section = displaySection
     )
     default Reward selectedReward() {
@@ -191,7 +199,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "goalDisplayFormat",
             name = "Goal Display Format",
             description = "Choose how to display the goal progress",
-            position = 17,
+            position = 18,
             section = displaySection
     )
     default GoalDisplayFormat goalDisplayFormat() {
@@ -202,7 +210,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showOrdersFulfilled",
             name = "Show Orders Fulfilled",
             description = "Toggle showing the orders fulfilled in the panel",
-            position = 18,
+            position = 19,
             section = displaySection
     )
     default boolean showOrdersFulfilled() {
@@ -213,7 +221,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showOrdersFulfilledInfobox",
             name = "Show Orders Fulfilled Infobox",
             description = "Toggle showing an infobox with the orders fulfilled",
-            position = 19,
+            position = 20,
             section = displaySection
     )
     default boolean showOrdersFulfilledInfobox() {
@@ -224,7 +232,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showBestOrderInfobox",
             name = "Show Best Order Infobox",
             description = "Toggle showing an infobox with the best order and its details",
-            position = 20,
+            position = 21,
             section = displaySection
     )
     default boolean showBestOrderInfobox() {
@@ -235,7 +243,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showBankedPaste",
             name = "Show banked paste",
             description = "Toggle showing banked paste in the panel",
-            position = 21,
+            position = 22,
             section = displaySection
     )
     default boolean showBankedPaste() {
@@ -246,7 +254,7 @@ public interface MixologyHelperConfig extends Config {
             keyName = "showDebugPanel",
             name = "Show debug panel",
             description = "Toggle displaying the debug panel",
-            position = 22,
+            position = 23,
             section = displaySection
     )
     default boolean showDebugPanel() {

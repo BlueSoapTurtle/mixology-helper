@@ -1,10 +1,13 @@
 package com.mixologyhelper.ui;
 
-import com.mixologyhelper.*;
-import com.mixologyhelper.data.*;
+import com.mixologyhelper.MixologyHelperConfig;
+import com.mixologyhelper.MixologyHelperPlugin;
 import com.mixologyhelper.data.Process;
-import net.runelite.api.*;
+import com.mixologyhelper.data.*;
+import net.runelite.api.Client;
+import net.runelite.api.Perspective;
 import net.runelite.api.Point;
+import net.runelite.api.TileObject;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.ui.ColorScheme;
@@ -21,11 +24,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.mixologyhelper.Constants.ORDER_WIDGET_ID;
+
 public class MixologyHelperOverlay extends Overlay {
     private final Client client;
     private final MixologyHelperPlugin plugin;
     private final MixologyHelperConfig config;
-    private static final int ORDER_WIDGET_ID = 57802754;
 
     @Inject
     private MixologyHelperOverlay(Client client, MixologyHelperPlugin plugin, MixologyHelperConfig config) {
@@ -51,19 +55,26 @@ public class MixologyHelperOverlay extends Overlay {
             return null;
         }
 
-        drawLevers(graphics, bestOrder);
-        drawMixer(graphics, bestOrder);
-        drawMachine(graphics, bestOrder);
-        drawConveyorBelt(graphics);
+        if (config.showLevers()) {
+            drawLevers(graphics, bestOrder);
+        }
+
+        if (config.showMixer()) {
+            drawMixer(graphics, bestOrder);
+        }
+
+        if (config.showMachines()) {
+            drawMachine(graphics, bestOrder);
+        }
+
+        if (config.showConveyorBelt()) {
+            drawConveyorBelt(graphics);
+        }
 
         return null;
     }
 
     private void drawLevers(Graphics2D graphics, Order order) {
-        if (!config.showLevers()) {
-            return;
-        }
-
         // Do not highlight levers after all ingredients have been added
         if (plugin.getCurrentStep().ordinal() >= MixologyStep.PICKUP_POTION.ordinal()) {
             return;
@@ -111,10 +122,6 @@ public class MixologyHelperOverlay extends Overlay {
     }
 
     private void drawMixer(Graphics2D graphics, Order order) {
-        if (!config.showMixer()) {
-            return;
-        }
-
         // Do not highlight mixer after potion has been picked up
         if (plugin.getCurrentStep().ordinal() >= MixologyStep.PROCESS_POTION.ordinal()) {
             return;
@@ -134,10 +141,6 @@ public class MixologyHelperOverlay extends Overlay {
     }
 
     private void drawMachine(Graphics2D graphics, Order order) {
-        if (!config.showMachines()) {
-            return;
-        }
-
         // Do not highlight machine after potion has been processed
         if (plugin.getCurrentStep().ordinal() >= MixologyStep.DELIVER_POTION.ordinal()) {
             return;
@@ -152,10 +155,6 @@ public class MixologyHelperOverlay extends Overlay {
     }
 
     private void drawConveyorBelt(Graphics2D graphics) {
-        if (!config.showConveyorBelt()) {
-            return;
-        }
-
         // Highlight green if current, orange otherwise
         boolean currentStep = plugin.getCurrentStep() == MixologyStep.DELIVER_POTION;
         Color color = currentStep ? ColorScheme.PROGRESS_COMPLETE_COLOR : ColorScheme.PROGRESS_INPROGRESS_COLOR;
@@ -191,10 +190,6 @@ public class MixologyHelperOverlay extends Overlay {
     }
 
     private void drawObjectClickbox(Graphics2D graphics, TileObject tileObject, Color color) {
-        if (tileObject == null) {
-            return;
-        }
-
         Shape objectClickbox = tileObject.getClickbox();
         if (objectClickbox != null) {
             Point mousePosition = client.getMouseCanvasPosition();
