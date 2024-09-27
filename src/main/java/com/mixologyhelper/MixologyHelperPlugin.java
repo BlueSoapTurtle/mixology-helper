@@ -63,13 +63,13 @@ public class MixologyHelperPlugin extends Plugin {
     private static final int INGREDIENT_2_CHANGED = 11325;
     private static final int INGREDIENT_3_CHANGED = 11326;
     private static final int RECIPE_VARBIT = 11339;
-    private static final int ORDER_WIDGET_ID = 57802754;
     private static final int RECIPE_1_VARBIT = 11315;
     private static final int PROCESS_1_VARBIT = 11316;
     private static final int RECIPE_2_VARBIT = 11317;
     private static final int PROCESS_2_VARBIT = 11318;
     private static final int RECIPE_3_VARBIT = 11319;
     private static final int PROCESS_3_VARBIT = 11320;
+    private static final int DIGWEED_SOUND_EFFECT = 3283; // anma_puzzle_complete sound effect
 
 
     // Player data
@@ -327,8 +327,7 @@ public class MixologyHelperPlugin extends Plugin {
     public void onGraphicsObjectCreated(GraphicsObjectCreated graphicsObjectCreated) {
         GraphicsObject graphicsObject = graphicsObjectCreated.getGraphicsObject();
         if (graphicsObject.getId() == ObjectID.MATURE_DIGWEED) {
-            // TODO Play a sound or something
-            // 3283 	anma_puzzle_complete
+            client.playSoundEffect(DIGWEED_SOUND_EFFECT);
         }
     }
 
